@@ -19,6 +19,8 @@ class TicketTypeResource extends Resource
 
     protected static \UnitEnum|string|null $navigationGroup = 'Events & Ticketing';
 
+    protected static bool $shouldRegisterNavigation = false;
+
     // TicketType belongs to Event which belongs to Company (tenant).
     // We scope records through the event relationship instead of a direct company FK.
     public static function isScopedToTenant(): bool

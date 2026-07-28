@@ -76,6 +76,31 @@ class EventResource extends Resource
                             ->required(),
                     ])->columns(2),
 
+                Section::make('Ticket Types')
+                    ->schema([
+                        Forms\Components\Repeater::make('ticketTypes')
+                            ->relationship('ticketTypes')
+                            ->schema([
+                                Forms\Components\TextInput::make('name')
+                                    ->required()
+                                    ->placeholder('e.g. VIP, Regular, Speaker')
+                                    ->maxLength(255),
+                                Forms\Components\TextInput::make('capacity')
+                                    ->numeric()
+                                    ->default(50)
+                                    ->required(),
+                                Forms\Components\TextInput::make('price')
+                                    ->numeric()
+                                    ->prefix('$')
+                                    ->default(0.00)
+                                    ->required(),
+                                Forms\Components\Textarea::make('description')
+                                    ->columnSpanFull(),
+                            ])
+                            ->columns(3)
+                            ->columnSpanFull(),
+                    ]),
+
                 Section::make('Dynamic Registration Form Fields')
                     ->schema([
                         Forms\Components\Repeater::make('custom_fields')
@@ -139,8 +164,11 @@ class EventResource extends Resource
                         'data-copy-url' => route('public.event.show', $record->slug),
                         'x-on:click.prevent' => 'window.epCopyLink($el.dataset.copyUrl)',
                     ]),
-                Actions\EditAction::make(),
-                Actions\DeleteAction::make(),
+                Actions\ViewAction::make(),
+                Actions\EditAction::make()
+                    ->hidden(fn (Event $record): bool => $record->start_date && now()->gte($record->start_date)),
+                Actions\DeleteAction::make()
+                    ->hidden(fn (Event $record): bool => $record->registrations()->exists() || ($record->start_date && now()->gte($record->start_date))),
             ])
             ->bulkActions([
                 Actions\BulkActionGroup::make([
@@ -149,11 +177,19 @@ class EventResource extends Resource
             ]);
     }
 
+    public static function getRelations(): array
+    {
+        return [
+            EventResource\RelationManagers\RegistrationsRelationManager::class,
+        ];
+    }
+
     public static function getPages(): array
     {
         return [
             'index' => Pages\ListEvents::route('/'),
             'create' => Pages\CreateEvent::route('/create'),
+            'view' => Pages\ViewEvent::route('/{record}'),
             'edit' => Pages\EditEvent::route('/{record}/edit'),
         ];
     }
