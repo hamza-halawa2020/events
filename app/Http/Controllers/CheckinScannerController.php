@@ -21,6 +21,11 @@ class CheckinScannerController extends Controller
     public function show(int $eventId)
     {
         $event = Event::findOrFail($eventId);
+
+        if (auth()->user()->company_id !== $event->company_id) {
+            abort(403, 'You do not have access to this event.');
+        }
+
         return view('staff.checkin-scanner', compact('event'));
     }
 
@@ -34,12 +39,22 @@ class CheckinScannerController extends Controller
         ]);
 
         $event = Event::findOrFail($eventId);
+
+        if (auth()->user()->company_id !== $event->company_id) {
+            return response()->json([
+                'success' => false,
+                'status_code' => 403,
+                'status' => 'UNAUTHORIZED',
+                'message' => '⛔ You are not authorized to check in for this event.',
+            ], 403);
+        }
+
         $device = $request->header('User-Agent', 'Mobile Camera Scanner');
 
         $result = $this->checkinService->processCheckin(
             event: $event,
             qrToken: $request->qr_token,
-            staffId: auth()->id() ?? 1,
+            staffId: auth()->id(),
             device: $device
         );
 

@@ -132,6 +132,17 @@ class EventResource extends Resource
                     ]),
             ])
             ->actions([
+                Actions\Action::make('registration_link')
+                    ->label('Registration Link')
+                    ->icon('heroicon-o-link')
+                    ->color('success')
+                    ->modalHeading(fn (Event $record) => 'Registration Link: ' . $record->title)
+                    ->modalDescription('Share this link with your attendees so they can register for the event.')
+                    ->modalContent(fn (Event $record) => view('filament.event-link-modal', [
+                        'url' => route('public.event.show', $record->slug),
+                    ]))
+                    ->modalSubmitAction(false)
+                    ->modalCancelActionLabel('Close'),
                 Actions\EditAction::make(),
                 Actions\DeleteAction::make(),
             ])

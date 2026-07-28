@@ -21,9 +21,12 @@
                 <span class="w-3 h-3 rounded-full bg-emerald-500 animate-ping"></span>
                 <h1 class="text-sm font-bold text-white tracking-wide uppercase">Gate Check-in</h1>
             </div>
-            <span class="text-xs bg-slate-800 text-slate-300 px-3 py-1 rounded-full font-medium truncate max-w-[180px]">
-                {{ $event->title }}
-            </span>
+            <div class="flex flex-col items-end gap-0.5">
+                <span class="text-xs bg-slate-800 text-slate-300 px-3 py-1 rounded-full font-medium truncate max-w-[180px]">
+                    {{ $event->title }}
+                </span>
+                <span class="text-xs text-slate-500">Staff: {{ auth()->user()->name }}</span>
+            </div>
         </div>
     </header>
 

@@ -66,7 +66,8 @@ class CheckinService
         $now = now();
         $registration->update([
             'checked_in_at' => $now,
-            'status' => 'checked_in',
+            'checked_in_by' => $staffId,
+            'status'        => 'checked_in',
         ]);
 
         Checkin::create([
