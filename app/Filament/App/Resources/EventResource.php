@@ -29,14 +29,9 @@ class EventResource extends Resource
                     ->schema([
                         Forms\Components\TextInput::make('title')
                             ->required()
-                            ->maxLength(255)
-                            ->live(onBlur: true)
-                            ->afterStateUpdated(fn (string $operation, $state, \Filament\Schemas\Components\Utilities\Set $set) => $operation === 'create' ? $set('slug', Str::slug($state)) : null),
+                            ->maxLength(255),
 
-                        Forms\Components\TextInput::make('slug')
-                            ->required()
-                            ->maxLength(255)
-                            ->unique(Event::class, 'slug', ignoreRecord: true),
+                        Forms\Components\Hidden::make('slug'),
 
                         Forms\Components\Textarea::make('description')
                             ->rows(3)
@@ -76,8 +71,6 @@ class EventResource extends Resource
                             ->options([
                                 'Draft' => 'Draft',
                                 'Published' => 'Published',
-                                'Closed' => 'Registration Closed',
-                                'Finished' => 'Finished',
                             ])
                             ->default('Draft')
                             ->required(),
@@ -93,8 +86,13 @@ class EventResource extends Resource
                                         'text' => 'Short Text',
                                         'textarea' => 'Long Text',
                                         'select' => 'Dropdown Select',
-                                    ])->default('text')->required(),
+                                    ])->default('text')->required()->live(),
                                 Forms\Components\Toggle::make('required')->default(false),
+                                Forms\Components\TextInput::make('options')
+                                    ->label('Options (comma separated)')
+                                    ->placeholder('Option A, Option B, Option C')
+                                    ->visible(fn ($get) => $get('type') === 'select')
+                                    ->columnSpan(2),
                             ])
                             ->columns(3)
                             ->columnSpanFull(),
@@ -136,13 +134,11 @@ class EventResource extends Resource
                     ->label('Registration Link')
                     ->icon('heroicon-o-link')
                     ->color('success')
-                    ->modalHeading(fn (Event $record) => 'Registration Link: ' . $record->title)
-                    ->modalDescription('Share this link with your attendees so they can register for the event.')
-                    ->modalContent(fn (Event $record) => view('filament.event-link-modal', [
-                        'url' => route('public.event.show', $record->slug),
-                    ]))
-                    ->modalSubmitAction(false)
-                    ->modalCancelActionLabel('Close'),
+                    ->url(fn (Event $record) => '#copy-' . $record->slug)
+                    ->extraAttributes(fn (Event $record) => [
+                        'data-copy-url' => route('public.event.show', $record->slug),
+                        'x-on:click.prevent' => 'window.epCopyLink($el.dataset.copyUrl)',
+                    ]),
                 Actions\EditAction::make(),
                 Actions\DeleteAction::make(),
             ])

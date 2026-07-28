@@ -22,7 +22,9 @@ class CheckinScanner extends Page
     public function getEvents()
     {
         return Event::where('company_id', filament()->getTenant()?->id)
-            ->whereIn('status', ['Published', 'Draft'])
+            ->whereIn('status', ['Published'])
+            ->where('start_date', '<=', now())
+            ->where('end_date', '>=', now())
             ->orderBy('start_date')
             ->get();
     }

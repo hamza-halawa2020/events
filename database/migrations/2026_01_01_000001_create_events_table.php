@@ -26,7 +26,7 @@ return new class extends Migration
             $table->dateTime('registration_end_date')->nullable();
             $table->integer('capacity')->default(100);
             $table->string('event_type')->default('Physical'); // Physical, Virtual, Hybrid
-            $table->string('status')->default('Draft'); // Draft, Published, Closed, Finished
+            $table->string('status')->default('Draft'); // Draft, Published,
             $table->json('custom_fields')->nullable(); // Configurable dynamic registration form fields
             $table->timestamps();
         });

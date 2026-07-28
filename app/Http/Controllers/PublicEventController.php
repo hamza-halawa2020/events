@@ -37,11 +37,21 @@ class PublicEventController extends Controller
     {
         $event = Event::where('slug', $slug)->firstOrFail();
 
-        $validated = $request->validate([
-            'attendee_name' => 'required|string|max:255',
+        $rules = [
+            'attendee_name'  => 'required|string|max:255',
             'attendee_email' => 'required|email|max:255',
             'ticket_type_id' => 'required|exists:ticket_types,id',
-        ]);
+        ];
+
+        // Add validation rules for required custom fields
+        foreach ($event->custom_fields ?? [] as $field) {
+            if (!empty($field['required'])) {
+                $rules['custom_fields.' . $field['name']] = 'required|string|max:500';
+            }
+        }
+
+        $validated = $request->validate($rules);
+        $validated['custom_fields_data'] = $request->input('custom_fields', []);
 
         try {
             $registration = $this->registrationService->registerAttendee($event, $validated);

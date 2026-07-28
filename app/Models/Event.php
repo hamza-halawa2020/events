@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
 
 class Event extends Model
 {
@@ -36,6 +37,19 @@ class Event extends Model
         'registration_end_date' => 'datetime',
         'custom_fields' => 'array',
     ];
+
+    protected static function booted(): void
+    {
+        static::creating(function (Event $event) {
+            $base = Str::slug($event->title);
+            $slug = $base;
+            $i = 2;
+            while (static::where('slug', $slug)->exists()) {
+                $slug = $base . '-' . $i++;
+            }
+            $event->slug = $slug;
+        });
+    }
 
     public function company(): BelongsTo
     {
