@@ -7,6 +7,7 @@ use App\Models\Event;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -24,13 +25,13 @@ class EventResource extends Resource
     {
         return $schema
             ->components([
-                Forms\Components\Section::make('Event Details')
+                Section::make('Event Details')
                     ->schema([
                         Forms\Components\TextInput::make('title')
                             ->required()
                             ->maxLength(255)
                             ->live(onBlur: true)
-                            ->afterStateUpdated(fn (string $operation, $state, Forms\Set $set) => $operation === 'create' ? $set('slug', Str::slug($state)) : null),
+                            ->afterStateUpdated(fn (string $operation, $state, \Filament\Schemas\Components\Utilities\Set $set) => $operation === 'create' ? $set('slug', Str::slug($state)) : null),
 
                         Forms\Components\TextInput::make('slug')
                             ->required()
@@ -53,7 +54,7 @@ class EventResource extends Resource
                             ->directory('event-covers'),
                     ])->columns(2),
 
-                Forms\Components\Section::make('Timing & Capacity')
+                Section::make('Timing & Capacity')
                     ->schema([
                         Forms\Components\DateTimePicker::make('start_date')->required(),
                         Forms\Components\DateTimePicker::make('end_date')->required(),
@@ -82,7 +83,7 @@ class EventResource extends Resource
                             ->required(),
                     ])->columns(2),
 
-                Forms\Components\Section::make('Dynamic Registration Form Fields')
+                Section::make('Dynamic Registration Form Fields')
                     ->schema([
                         Forms\Components\Repeater::make('custom_fields')
                             ->schema([

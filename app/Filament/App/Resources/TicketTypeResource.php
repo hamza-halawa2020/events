@@ -19,12 +19,27 @@ class TicketTypeResource extends Resource
 
     protected static \UnitEnum|string|null $navigationGroup = 'Events & Ticketing';
 
+    // TicketType belongs to Event which belongs to Company (tenant).
+    // We scope records through the event relationship instead of a direct company FK.
+    public static function isScopedToTenant(): bool
+    {
+        return false;
+    }
+
+    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    {
+        $tenant = filament()->getTenant();
+
+        return parent::getEloquentQuery()
+            ->whereHas('event', fn ($q) => $q->where('company_id', $tenant?->id));
+    }
+
     public static function form(Schema $schema): Schema
     {
         return $schema
             ->components([
                 Forms\Components\Select::make('event_id')
-                    ->relationship('event', 'title')
+                    ->relationship('event', 'title', fn ($query) => $query->where('company_id', filament()->getTenant()?->id))
                     ->required()
                     ->searchable(),
                 Forms\Components\TextInput::make('name')

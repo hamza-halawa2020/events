@@ -62,7 +62,7 @@ class PublicEventController extends Controller
             ->with(['ticketType', 'event.company'])
             ->firstOrFail();
 
-        $qrSvg = TicketService::generateQrSvg($registration->qr_code_token);
+        $qrSvg = TicketService::generateQrSvg($registration->qr_code);
 
         return view('events.success', compact('event', 'registration', 'qrSvg'));
     }

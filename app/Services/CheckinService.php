@@ -20,7 +20,7 @@ class CheckinService
         // 1. Find registration by QR token or Ticket Code
         $registration = Registration::where('event_id', $event->id)
             ->where(function ($q) use ($qrToken) {
-                $q->where('qr_code_token', $qrToken)
+                $q->where('qr_code', $qrToken)
                   ->orWhere('ticket_code', $qrToken);
             })
             ->with('ticketType')
@@ -37,7 +37,7 @@ class CheckinService
 
         // 2. Verify HMAC Token integrity
         $expectedToken = TicketService::generateQrToken($registration->ticket_code);
-        if ($registration->qr_code_token && $registration->qr_code_token !== $qrToken && $expectedToken !== $qrToken) {
+        if ($registration->qr_code && $registration->qr_code !== $qrToken && $expectedToken !== $qrToken) {
             return [
                 'success' => false,
                 'status_code' => 403,
@@ -54,7 +54,7 @@ class CheckinService
                 'status' => 'ALREADY_CHECKED_IN',
                 'message' => '⚠️ Attendee already checked in on ' . Carbon::parse($registration->checked_in_at)->format('g:i:s A'),
                 'attendee' => [
-                    'name' => $registration->attendee_name,
+                    'name' => $registration->name,
                     'ticket_code' => $registration->ticket_code,
                     'ticket_type' => $registration->ticketType->name ?? 'Standard',
                     'checked_in_at' => $registration->checked_in_at,
@@ -83,10 +83,10 @@ class CheckinService
             'success' => true,
             'status_code' => 200,
             'status' => 'CHECKIN_SUCCESS',
-            'message' => '✅ Verified! Welcome, ' . $registration->attendee_name,
+            'message' => '✅ Verified! Welcome, ' . $registration->name,
             'attendee' => [
-                'name' => $registration->attendee_name,
-                'email' => $registration->attendee_email,
+                'name' => $registration->name,
+                'email' => $registration->email,
                 'ticket_code' => $registration->ticket_code,
                 'ticket_type' => $registration->ticketType->name ?? 'Standard',
                 'checked_in_at' => $now->format('g:i:s A'),

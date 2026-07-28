@@ -31,7 +31,7 @@
             </div>
 
             <h1 class="text-3xl font-extrabold text-white mb-2">You're Registered!</h1>
-            <p class="text-sm text-slate-400 mb-6">Your spot is confirmed for <strong>{{ $event->title }}</strong>. A confirmation email has been sent to <span class="text-slate-200 font-semibold">{{ $registration->attendee_email }}</span>.</p>
+            <p class="text-sm text-slate-400 mb-6">Your spot is confirmed for <strong>{{ $event->title }}</strong>. A confirmation email has been sent to <span class="text-slate-200 font-semibold">{{ $registration->email }}</span>.</p>
 
             <!-- Digital QR Ticket Preview Card -->
             <div class="bg-slate-900 border border-slate-700 rounded-2xl p-6 mb-6 text-center space-y-4">
@@ -43,7 +43,7 @@
                     <p class="text-lg font-mono font-bold text-indigo-400 mt-0.5">{{ $registration->ticket_code }}</p>
                 </div>
                 <div class="text-xs text-slate-400 border-t border-slate-800 pt-3 flex justify-around">
-                    <span><strong>Attendee:</strong> {{ $registration->attendee_name }}</span>
+                    <span><strong>Attendee:</strong> {{ $registration->name }}</span>
                     <span><strong>Type:</strong> {{ $registration->ticketType->name ?? 'Standard' }}</span>
                 </div>
             </div>

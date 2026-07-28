@@ -47,7 +47,7 @@ class TicketService
     {
         $registration->loadMissing(['event.company', 'ticketType']);
         
-        $qrToken = $registration->qr_code_token ?? self::generateQrToken($registration->ticket_code);
+        $qrToken = $registration->qr_code ?? self::generateQrToken($registration->ticket_code);
         $qrSvg = self::generateQrSvg($qrToken);
 
         $pdf = Pdf::loadView('pdf.ticket', [

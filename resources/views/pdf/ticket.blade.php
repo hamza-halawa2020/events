@@ -109,10 +109,10 @@
         <div class="ticket-body">
             <div class="info-col">
                 <div class="label">Attendee Name</div>
-                <div class="value">{{ $registration->attendee_name }}</div>
+                <div class="value">{{ $registration->name }}</div>
 
                 <div class="label">Email Address</div>
-                <div class="value">{{ $registration->attendee_email }}</div>
+                <div class="value">{{ $registration->email }}</div>
 
                 <div class="label">Ticket Category</div>
                 <div class="value">

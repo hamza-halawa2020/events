@@ -33,15 +33,13 @@ class EventRegistrationService
 
             // 3. Create Registration
             $registration = Registration::create([
-                'company_id' => $event->company_id,
-                'event_id' => $event->id,
-                'ticket_type_id' => $ticketType->id,
-                'attendee_name' => $data['attendee_name'],
-                'attendee_email' => $data['attendee_email'],
-                'ticket_code' => $ticketCode,
-                'qr_code_token' => $qrToken,
-                'status' => 'confirmed',
-                'registered_at' => now(),
+                'event_id'          => $event->id,
+                'ticket_type_id'    => $ticketType->id,
+                'name'              => $data['attendee_name'],
+                'email'             => $data['attendee_email'],
+                'ticket_code'       => $ticketCode,
+                'qr_code'           => $qrToken,
+                'status'            => 'confirmed',
             ]);
 
             // 4. Decrement available capacity
@@ -51,7 +49,7 @@ class EventRegistrationService
 
             // 5. Send Email Notification
             try {
-                Mail::to($registration->attendee_email)->send(new TicketConfirmationMail($registration));
+                Mail::to($registration->email)->send(new TicketConfirmationMail($registration));
             } catch (\Throwable $e) {
                 logger()->error('Failed sending ticket email: ' . $e->getMessage());
             }

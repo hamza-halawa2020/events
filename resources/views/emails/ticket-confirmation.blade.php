@@ -16,7 +16,7 @@
             <h2>Registration Confirmed!</h2>
         </div>
         <div class="content">
-            <p>Dear <strong>{{ $registration->attendee_name }}</strong>,</p>
+            <p>Dear <strong>{{ $registration->name }}</strong>,</p>
             <p>Thank you for registering for <strong>{{ $event->title }}</strong> organized by {{ $company->name ?? 'EventPass' }}.</p>
             
             <div class="ticket-box">
