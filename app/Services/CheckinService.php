@@ -70,13 +70,11 @@ class CheckinService
         ]);
 
         Checkin::create([
-            'company_id' => $event->company_id,
-            'event_id' => $event->id,
             'registration_id' => $registration->id,
-            'staff_id' => $staffId ?? auth()->id() ?? 1,
-            'scanned_at' => $now,
-            'status' => 'success',
-            'device' => $device ?? 'Mobile Camera Scanner',
+            'staff_id'        => $staffId ?? auth()->id(),
+            'checkin_time'    => $now,
+            'status'          => 'Granted',
+            'device'          => $device ?? 'Mobile Camera Scanner',
         ]);
 
         return [
